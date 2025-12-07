@@ -114,9 +114,10 @@ register500Route(router)
 app.use(baseUrl, router)
 
 const port = Number(process.env.PORT) || 3000
+const bind_addr = process.env.BIND_ADDR || '0.0.0.0'
 
 let listener = (proto: "http" | "https") => () => {
-  logger.info(`Listening on ${proto}://0.0.0.0:${port}`)
+  logger.info(`Listening on ${proto}://${bind_addr}:${port}`)
 }
 
 // When using the Ory Admin API Token, we assume that this application is also
@@ -147,8 +148,8 @@ if (
       key: fs.readFileSync(process.env.TLS_KEY_PATH),
     }
 
-    https.createServer(options, app).listen(port, listener("https"))
+    https.createServer(options, app).listen(port, bind_addr, listener("https"))
   } else {
-    app.listen(port, listener("http"))
+    app.listen(port, bind_addr, listener("http"))
   }
 }
